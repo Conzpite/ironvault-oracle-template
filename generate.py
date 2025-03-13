@@ -99,7 +99,7 @@ def generate_table(dice_expression, expected_rows=0, dataset=[]):
     dice_values_col = map(lambda x: x.ljust(dice_values_col_max_length), dice_values_col)
     result_col = map(lambda x: x.ljust(result_col_max_length), result_col)
 
-    output = "";
+    output = "\n";
 
     output += '| {} | {} |\n'.format(dice_expression_header_str, result_header_str);
     output += '| {} | {} |\n'.format('-' * dice_values_col_max_length, '-' * result_col_max_length);
@@ -181,7 +181,7 @@ def main():
 
     # Output file related
     parser.add_argument("-o", "--output-file_name", nargs="?", default="output", const="output", help="Name of the generated file (excluding file extension)", type=str)
-    parser.add_argument("-d", "--description", nargs="?", default="Here is a descripton of my oracle", const="Here is a descripton of my oracle", help="Description to place in resulting oracle file",  type=str)
+    parser.add_argument("-d", "--description", nargs="?", default="Here is a description of my oracle", const="Here is a descripton of my oracle", help="Description to place in resulting oracle file",  type=str)
     parser.add_argument("-w", "--overwrite", action="store_true", help="Automatically overwrites file without prompting")
 
     # Input file related
