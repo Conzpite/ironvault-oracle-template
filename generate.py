@@ -29,34 +29,60 @@ def retrieve_dataset_value(index, dataset=[]):
 
     return "VALUE OUT OF BOUNDS";
 
+def generate_table_values(dice_num, dice_sides, expected_rows, dataset):
+    dice_values_col = [];
+    result_col = [];
+
+    if dice_num == 1:
+        if expected_rows != 0:
+            # Calculate values based on expected rows
+            row_range = dice_sides // expected_rows; # How much range each row should cover
+            remainder = dice_sides % expected_rows; # How many rows should get the extra leftovers
+
+            if 0:
+                print("More expected rows requested than is possible for dice of side {}".format(dice_sides));
+                print("Changing to {} rows".format(dice_sides));
+                expected_rows = dice_sides;
+                row_range = 1;
+                remainder = 0;
+
+            dice_value = 0;
+
+            for x in range(expected_rows):
+                min_range = dice_value + 1;
+                max_range = dice_value + row_range + 1 if remainder > x else dice_value + row_range;
+
+                if min_range == max_range:
+                    dice_values_col.append(str(min_range));
+                else:
+                    dice_values_col.append("{}-{}".format(min_range, max_range));
+                result_col.append(retrieve_dataset_value(len(result_col)));
+
+                dice_value = max_range;
+        else:
+            # Each value from 1 to dice_side is its own row
+            for x in range(dice_sides):
+                dice_values_col.append(str(x + 1));
+                result_col.append(retrieve_dataset_value(len(result_col)));
+    else:
+        # Calulate all possible value of the dice as its own row
+        # This is not affected in any way by expected_rows
+        min_roll_value = dice_num;
+        max_roll_value = dice_num * dice_sides;
+
+        for x in range(min_roll_value, max_roll_value + 1):
+            dice_values_col.append(str(x));
+            result_col.append(retrieve_dataset_value(len(result_col)));
+
+    return dice_values_col, result_col
+
 def generate_table(dice_expression, expected_rows=0, dataset=[]):
     [dice_num, dice_sides] = extract_dice_values(dice_expression);
 
     dice_expression_header_str = "dice: {}".format(dice_expression);
     result_header_str = "Result";
 
-    dice_values_col = [];
-    result_col = [];
-    dataset_index = 0;
-
-    if dice_num == 1:
-        if expected_rows != 0:
-            # Calculate values based on expected rows
-            for x in range(expected_rows):
-                dataset_index += 1;
-                return;
-        else:
-            # Each value from 1 to dice_side is its own row
-            for x in range(dice_sides):
-                dice_values_col.append(str(x + 1));
-                result_col.append(retrieve_dataset_value(dataset_index));
-                dataset_index += 1
-    else:
-        # Calulate all possible value of the dice as its own row
-        # This is not affected in any way by expected_rows
-        for x in range(dice_sides):
-            dataset_index += 1;
-            return;
+    dice_values_col, result_col = generate_table_values(dice_num, dice_sides, expected_rows, dataset);
 
     # Go another round to pad out values for a nicer look
     dice_values_col_max_length = max(len(dice_expression_header_str), max([len(i) for i in dice_values_col], default=0));
@@ -112,6 +138,7 @@ def main():
     parser.add_argument("-i", "--input-file", nargs="?", default="", const="", help="Path to file containing values to fill in results (including file extension)", type=str)
     parser.add_argument("-s", "--separator", nargs="?", default="\n", const="\n", help="Delimiter used to read values from input file. Newline by default.",  type=str)
     parser.add_argument("-d", "--description", nargs="?", default="Here is a descripton of my oracle", const="Here is a descripton of my oracle", help="Description to place in resulting oracle file",  type=str)
+    parser.add_argument("-w", "--overwrite", action="store_true", help="Automatically overwrites file without prompting")
     args = parser.parse_args()
 
     print(args);

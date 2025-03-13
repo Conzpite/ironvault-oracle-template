@@ -1,4 +1,4 @@
-from generate import extract_dice_values, generate_table, generate_header
+from generate import extract_dice_values, generate_header, retrieve_dataset_value
 import pytest
 
 class TestExtractDice:
@@ -30,3 +30,10 @@ type: oracle_rollable
 description: Header Value
 ---
 '''
+
+class TestRetrieveDatasetValue:
+    def test_retrieve_dataset_value_no_dataset(self):
+        assert retrieve_dataset_value(7) == "Value 8";
+
+    def test_retrieve_dataset_value_empty_dataset(self):
+        assert retrieve_dataset_value(5, []) == "Value 6";
