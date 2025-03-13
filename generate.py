@@ -7,6 +7,9 @@ def debug_print(*args):
     if DEBUG_PRINT:
         print(*args);
 
+def expected_rows_is_more_than_dice_sides(expected_rows, dice_sides):
+    return expected_rows > dice_sides;
+
 def extract_dice_values(dice_expression):
     # Validate dice expression
     r = re.search(r"^(\d*)[dD]([\d]+)$", dice_expression);
@@ -44,7 +47,7 @@ def generate_table_values(dice_num, dice_sides, expected_rows, dataset):
             row_range = dice_sides // expected_rows; # How much range each row should cover
             remainder = dice_sides % expected_rows; # How many rows should get the extra leftovers
 
-            if 0:
+            if expected_rows_is_more_than_dice_sides(expected_rows, dice_sides):
                 print("More expected rows requested than is possible for dice of side {}".format(dice_sides));
                 print("Changing to {} rows".format(dice_sides));
                 expected_rows = dice_sides;
@@ -173,6 +176,25 @@ def read_dataset_from_file(filepath, delimiter, auto_trim):
         print("File not found. Check the path variable and filename")
         exit()
 
+def create_default_filename(dice_expression, expected_rows):
+    [dice_num, dice_sides] = extract_dice_values(dice_expression);
+
+    prefix = "t-";
+
+    filename = "{}{}d{}".format(prefix, dice_num, dice_sides);
+
+    if expected_rows_is_more_than_dice_sides(expected_rows, dice_sides):
+        # rows will be decreased to meet sides in this scenerio, so no need to append rows
+        pass;
+    elif dice_num != 1:
+        # expected rows has no use with multiple dice, so no need to append rows
+        pass;
+    elif expected_rows != 0:
+        filename += "-{}".format(expected_rows);
+
+    return filename;
+
+
 def main():
     parser = argparse.ArgumentParser("Generate a .md file to serve as a homebrew oracle for iron vault obsidian")
 
@@ -180,7 +202,7 @@ def main():
     parser.add_argument("-r", "--rows", nargs="?", default=0, const=0, help="Expected number of results. An non-zero input value here, along with a dice experssion of dY, will result in dice values being consolidated in that many rows (a d6 with rows of 3 result in 1-2, 3-4, 5-6 columns). In the event that that the values cannot be evenly split, the extra values will be spread among the rows, starting from the first row. Does nothing for XdY where X is not 1", type=int)
 
     # Output file related
-    parser.add_argument("-o", "--output-file_name", nargs="?", default="output", const="output", help="Name of the generated file (excluding file extension). Note that this must not begin with a number, as this will cause ironvault to fail reading the file", type=str)
+    parser.add_argument("-o", "--output-file_name", nargs="?", default="", const="", help="Name of the generated file (excluding file extension). Note that this must not begin with a number, as this will cause ironvault to fail reading the file", type=str)
     parser.add_argument("-d", "--description", nargs="?", default="Here is a description of my oracle", const="Here is a descripton of my oracle", help="Description to place in resulting oracle file",  type=str)
     parser.add_argument("-w", "--overwrite", action="store_true", help="Automatically overwrites file without prompting")
 
@@ -199,11 +221,17 @@ def main():
     debug_print("\nArgs:")
     debug_print(args)
 
-    # Need to prevent output file from starting with a digit
-    if args.output_file_name[0].isdigit():
+    output_name = args.output_file_name;
+    if not output_name:
+        output_name = create_default_filename(args.dice_expression, args.rows);
+        print("No output name provided. Defaulting to {}");
+
+    if output_name.isdigit():
+        # Need to prevent output file from starting with a digit
         print("Output file must not begin with a number, as this will cause ironvault to fail reading the file.");
         print("Please change the output file name and try again.");
         exit();
+
 
     # Take in file to extract data from, and delimiter
     dataset = read_dataset_from_file(args.input_file, args.separator, not args.no_auto_trim);
@@ -213,8 +241,10 @@ def main():
     header = generate_header(args.description);
     body = generate_table(args.dice_expression, args.rows, dataset);
 
+
+
     # Write MD file
-    write_to_file(header, body, args.output_file_name, always_overwrite = args.overwrite)
+    write_to_file(header, body, output_name, always_overwrite = args.overwrite)
 
 if __name__ == "__main__":
     main()
