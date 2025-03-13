@@ -181,7 +181,7 @@ def create_default_filename(dice_expression, expected_rows):
 
     prefix = "t-";
 
-    filename = "{}{}d{}".format(prefix, dice_num, dice_sides);
+    filename = "{}{}d{}".format(prefix, dice_num if dice_num != 1 else "", dice_sides);
 
     if expected_rows_is_more_than_dice_sides(expected_rows, dice_sides):
         # rows will be decreased to meet sides in this scenerio, so no need to append rows
