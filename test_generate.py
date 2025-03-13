@@ -1,4 +1,4 @@
-from generate import extract_dice_values, generate_header, retrieve_dataset_value, generate_table_values
+from generate import extract_dice_values, generate_header, retrieve_dataset_value, generate_table_values, read_dataset
 import pytest
 
 class TestExtractDice:
@@ -71,3 +71,19 @@ class TestGenerateTableValue:
         assert generate_table_values(1, 20, 5, ["Dataset 1", "Dataset 2", "Dataset 3", "Dataset 4", "Dataset 5", "Dataset 6", "Dataset 7", "Dataset 8"]) ==  \
                                                       (["1-4", "5-8", "9-12", "13-16", "17-20"], 
                                                       ["Dataset 1", "Dataset 2", "Dataset 3", "Dataset 4", "Dataset 5"]);
+
+class TestReadDataset:
+    def test_read_dataset_delimiter_newline(self):
+        assert read_dataset("Dataset 1\nDataset 2\nDataset 3", "\n", True) == ["Dataset 1", "Dataset 2", "Dataset 3"];
+
+    def test_read_dataset_delimiter_comma(self):
+        assert read_dataset("Dataset 1,Dataset 2,Dataset 3", ",", True) == ["Dataset 1", "Dataset 2", "Dataset 3"];
+
+    def test_read_dataset_trim(self):
+        assert read_dataset("Dataset 1  \n  Dataset 2\n     Dataset 3", "\n", True) == ["Dataset 1", "Dataset 2", "Dataset 3"];
+
+    def test_read_dataset_without_trim(self):
+        assert read_dataset("Dataset 1  \n  Dataset 2\n     Dataset 3", "\n", False) == ["Dataset 1  ", "  Dataset 2", "     Dataset 3"];
+
+    def test_read_dataset_with_newline_in_text(self):
+        assert read_dataset("Dataset 1\nDescription 1,Dataset 2\nDescription 2,Dataset 3\nDescription 3", ",", True) == ["Dataset 1<br>Description 1", "Dataset 2<br>Description 2", "Dataset 3<br>Description 3"];
