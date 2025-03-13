@@ -199,6 +199,12 @@ def main():
     debug_print("\nArgs:")
     debug_print(args)
 
+    # Need to prevent output file from starting with a digit
+    if args.output_file_name[0].isdigit():
+        print("Output file must not begin with a number, as this will cause ironvault to fail reading the file.");
+        print("Please change the output file name and try again.");
+        exit();
+
     # Take in file to extract data from, and delimiter
     dataset = read_dataset_from_file(args.input_file, args.separator, not args.no_auto_trim);
     debug_print("\nDataset:")
