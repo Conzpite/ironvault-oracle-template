@@ -1,5 +1,4 @@
 import argparse
-import os
 import re
 
 def extract_dice_values(dice_expression):
@@ -79,7 +78,7 @@ def generate_table_values(dice_num, dice_sides, expected_rows, dataset):
 def generate_table(dice_expression, expected_rows=0, dataset=[]):
     [dice_num, dice_sides] = extract_dice_values(dice_expression);
 
-    dice_expression_header_str = "dice: {}".format(dice_expression);
+    dice_expression_header_str = "dice: {}d{}".format(dice_num, dice_sides);
     result_header_str = "Result";
 
     dice_values_col, result_col = generate_table_values(dice_num, dice_sides, expected_rows, dataset);
@@ -117,6 +116,11 @@ description: {}
     return val;
 
 def write_to_file(header, body, fileName, filePath='output/'):
+
+    print("----------{}.md----------".format(fileName))
+    print(header);
+    print(body);
+
     # TODO Check for existing file, and confirm override
 
     with open(filePath + fileName, "w") as f:
@@ -124,36 +128,55 @@ def write_to_file(header, body, fileName, filePath='output/'):
         f.write(header);
         f.write(body);
 
-def retrieve_dataset_from_file(filepath, delimiter):
+def read_dataset(file_content, delimiter, auto_trim):
+    dataset_values = file_content.split(delimiter);
+
+    if auto_trim:
+        dataset_values = [s.strip() for s in dataset_values]
+    
+    # Newlines are expressed as <br> in markdown
+    return [s.replace('\n', '<br>') for s in dataset_values]
+
+def read_dataset_from_file(filepath, delimiter, auto_trim):
     if not filepath:
         return [];
 
-    return [];
+    try:
+        with open(filepath, "r") as f:
+            file_content = f.read();
+
+            return read_dataset(file_content, delimiter, auto_trim)
+    except FileNotFoundError:
+        print("File not found. Check the path variable and filename")
+        exit()
 
 def main():
     parser = argparse.ArgumentParser("Generate a .md file to serve as a homebrew oracle for iron vault obsidian")
+
     parser.add_argument("dice_expression", help="Dice notation of what dice the oracle should roll on. Currently supports only dY and XdY format ('d4', '1d6', '2d10' etc).", type=str)
     parser.add_argument("-r", "--rows", nargs="?", default=0, const=0, help="Expected number of results. An non-zero input value here, along with a dice experssion of dY, will result in dice values being consolidated in that many rows (a d6 with rows of 3 result in 1-2, 3-4, 5-6 columns). In the event that that the values cannot be evenly split, the extra values will be spread among the rows, starting from the first row. Does nothing for XdY where X is not 1.", type=int)
+
+    # Output file related
     parser.add_argument("-o", "--output-file_name", nargs="?", default="output", const="output", help="Name of the generated file (excluding file extension)", type=str)
-    parser.add_argument("-i", "--input-file", nargs="?", default="", const="", help="Path to file containing values to fill in results (including file extension)", type=str)
-    parser.add_argument("-s", "--separator", nargs="?", default="\n", const="\n", help="Delimiter used to read values from input file. Newline by default.",  type=str)
     parser.add_argument("-d", "--description", nargs="?", default="Here is a descripton of my oracle", const="Here is a descripton of my oracle", help="Description to place in resulting oracle file",  type=str)
     parser.add_argument("-w", "--overwrite", action="store_true", help="Automatically overwrites file without prompting")
+
+    # Input file related
+    parser.add_argument("-i", "--input-file", nargs="?", default="", const="", help="Path to file containing values to fill in results (including file extension)", type=str)
+    parser.add_argument("-s", "--separator", nargs="?", default="\n", const="\n", help="Delimiter used to read values from input file. Newline by default.",  type=str)
+    parser.add_argument("-n", "--no-auto-trim", action="store_true", help="By default, the system will attempt to trim resulting values from input files, i.e, it prevents row values from containing whitespaces and newlines at the start and end. set this to stop it from doing so")
     args = parser.parse_args()
 
-    print(args);
+    print(args)
+
     # Take in file to extract data from, and delimiter
-    dataset = retrieve_dataset_from_file(args.input_file, args.separator);
+    dataset = read_dataset_from_file(args.input_file, args.separator, not args.no_auto_trim);
 
     header = generate_header(args.description);
     body = generate_table(args.dice_expression, args.rows, dataset);
 
-    print(header);
-    print(body);
-
     # Write MD file
     write_to_file(header, body, args.output_file_name)
-
 
 if __name__ == "__main__":
     main()
