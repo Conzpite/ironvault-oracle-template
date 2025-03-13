@@ -56,14 +56,14 @@ def generate_table_values(dice_num, dice_sides, expected_rows, dataset):
                     dice_values_col.append(str(min_range));
                 else:
                     dice_values_col.append("{}-{}".format(min_range, max_range));
-                result_col.append(retrieve_dataset_value(len(result_col)));
+                result_col.append(retrieve_dataset_value(len(result_col), dataset));
 
                 dice_value = max_range;
         else:
             # Each value from 1 to dice_side is its own row
             for x in range(dice_sides):
                 dice_values_col.append(str(x + 1));
-                result_col.append(retrieve_dataset_value(len(result_col)));
+                result_col.append(retrieve_dataset_value(len(result_col), dataset));
     else:
         # Calulate all possible value of the dice as its own row
         # This is not affected in any way by expected_rows
@@ -72,7 +72,7 @@ def generate_table_values(dice_num, dice_sides, expected_rows, dataset):
 
         for x in range(min_roll_value, max_roll_value + 1):
             dice_values_col.append(str(x));
-            result_col.append(retrieve_dataset_value(len(result_col)));
+            result_col.append(retrieve_dataset_value(len(result_col), dataset));
 
     return dice_values_col, result_col
 
