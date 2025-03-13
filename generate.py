@@ -1,5 +1,11 @@
 import argparse
 import re
+import os
+
+DEBUG_PRINT = False;
+def debug_print(*args):
+    if DEBUG_PRINT:
+        print(*args);
 
 def extract_dice_values(dice_expression):
     # Validate dice expression
@@ -93,7 +99,6 @@ def generate_table(dice_expression, expected_rows=0, dataset=[]):
     dice_values_col = map(lambda x: x.ljust(dice_values_col_max_length), dice_values_col)
     result_col = map(lambda x: x.ljust(result_col_max_length), result_col)
 
-    
     output = "";
 
     output += '| {} | {} |\n'.format(dice_expression_header_str, result_header_str);
@@ -115,18 +120,36 @@ description: {}
 
     return val;
 
-def write_to_file(header, body, fileName, filePath='output/'):
+def write_to_file(header, body, fileName, filePath='output/', always_overwrite=False):
 
-    print("----------{}.md----------".format(fileName))
-    print(header);
-    print(body);
+    full_file_name = fileName + ".md";
+    full_path = filePath + full_file_name;
 
-    # TODO Check for existing file, and confirm override
+    debug_print("\nOutput to {}:".format(full_file_name));
+    debug_print(header);
+    debug_print(body);
 
-    with open(filePath + fileName, "w") as f:
-        print("Writing " + fileName + "...");
-        f.write(header);
-        f.write(body);
+    if os.path.exists(full_path) and not always_overwrite:
+        reply = ""
+        while reply.lower() != "n" and reply.lower() != "y":
+            reply = input("{} already exists. Overwrite file? (y/n)\n".format(full_path));
+
+        if reply == "n":
+            print("Operation has ceased...")
+            exit();
+        elif reply == "y":
+            # No need to do anything 
+            pass;
+
+    try:
+        with open(full_path, "w") as f:
+            print("Writing to " + full_path + "...");
+            f.write(header);
+            f.write(body);
+            print("Writing completed");
+    except FileNotFoundError:
+        print("Unable to write to {}".format(full_path));
+        exit()
 
 def read_dataset(file_content, delimiter, auto_trim):
     dataset_values = file_content.split(delimiter);
@@ -165,18 +188,27 @@ def main():
     parser.add_argument("-i", "--input-file", nargs="?", default="", const="", help="Path to file containing values to fill in results (including file extension)", type=str)
     parser.add_argument("-s", "--separator", nargs="?", default="\n", const="\n", help="Delimiter used to read values from input file. Newline by default.",  type=str)
     parser.add_argument("-n", "--no-auto-trim", action="store_true", help="By default, the system will attempt to trim resulting values from input files, i.e, it prevents row values from containing whitespaces and newlines at the start and end. set this to stop it from doing so")
+
+    # Debug related
+    parser.add_argument("-p", "--print-debug", action="store_true", help="Set this to allow the system to print messages, mainly for debugging purposes")
+
     args = parser.parse_args()
 
-    print(args)
+    global DEBUG_PRINT
+    DEBUG_PRINT = args.print_debug;
+    debug_print("\nArgs:")
+    debug_print(args)
 
     # Take in file to extract data from, and delimiter
     dataset = read_dataset_from_file(args.input_file, args.separator, not args.no_auto_trim);
+    debug_print("\nDataset:")
+    debug_print(dataset)
 
     header = generate_header(args.description);
     body = generate_table(args.dice_expression, args.rows, dataset);
 
     # Write MD file
-    write_to_file(header, body, args.output_file_name)
+    write_to_file(header, body, args.output_file_name, always_overwrite = args.overwrite)
 
 if __name__ == "__main__":
     main()
