@@ -176,17 +176,17 @@ def read_dataset_from_file(filepath, delimiter, auto_trim):
 def main():
     parser = argparse.ArgumentParser("Generate a .md file to serve as a homebrew oracle for iron vault obsidian")
 
-    parser.add_argument("dice_expression", help="Dice notation of what dice the oracle should roll on. Currently supports only dY and XdY format ('d4', '1d6', '2d10' etc).", type=str)
-    parser.add_argument("-r", "--rows", nargs="?", default=0, const=0, help="Expected number of results. An non-zero input value here, along with a dice experssion of dY, will result in dice values being consolidated in that many rows (a d6 with rows of 3 result in 1-2, 3-4, 5-6 columns). In the event that that the values cannot be evenly split, the extra values will be spread among the rows, starting from the first row. Does nothing for XdY where X is not 1.", type=int)
+    parser.add_argument("dice_expression", help="Dice notation of what dice the oracle should roll on. Currently supports only dY and XdY format ('d4', '1d6', '2d10' etc)", type=str)
+    parser.add_argument("-r", "--rows", nargs="?", default=0, const=0, help="Expected number of results. An non-zero input value here, along with a dice experssion of dY, will result in dice values being consolidated in that many rows (a d6 with rows of 3 result in 1-2, 3-4, 5-6 columns). In the event that that the values cannot be evenly split, the extra values will be spread among the rows, starting from the first row. Does nothing for XdY where X is not 1", type=int)
 
     # Output file related
-    parser.add_argument("-o", "--output-file_name", nargs="?", default="output", const="output", help="Name of the generated file (excluding file extension)", type=str)
+    parser.add_argument("-o", "--output-file_name", nargs="?", default="output", const="output", help="Name of the generated file (excluding file extension). Note that this must not begin with a number, as this will cause ironvault to fail reading the file", type=str)
     parser.add_argument("-d", "--description", nargs="?", default="Here is a description of my oracle", const="Here is a descripton of my oracle", help="Description to place in resulting oracle file",  type=str)
     parser.add_argument("-w", "--overwrite", action="store_true", help="Automatically overwrites file without prompting")
 
     # Input file related
     parser.add_argument("-i", "--input-file", nargs="?", default="", const="", help="Path to file containing values to fill in results (including file extension)", type=str)
-    parser.add_argument("-s", "--separator", nargs="?", default="\n", const="\n", help="Delimiter used to read values from input file. Newline by default.",  type=str)
+    parser.add_argument("-s", "--separator", nargs="?", default="\n", const="\n", help="Delimiter used to read values from input file. Newline by default",  type=str)
     parser.add_argument("-n", "--no-auto-trim", action="store_true", help="By default, the system will attempt to trim resulting values from input files, i.e, it prevents row values from containing whitespaces and newlines at the start and end. set this to stop it from doing so")
 
     # Debug related
