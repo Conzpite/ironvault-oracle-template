@@ -224,7 +224,7 @@ def main():
     output_name = args.output_file_name;
     if not output_name:
         output_name = create_default_filename(args.dice_expression, args.rows);
-        print("No output name provided. Defaulting to {}");
+        print("No output name provided. Defaulting to {}".format(output_name));
 
     if output_name.isdigit():
         # Need to prevent output file from starting with a digit
