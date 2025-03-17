@@ -16,12 +16,14 @@ For general use cases, you
 ```python generate.py [dice_expression]```
 
 ### Arguments and flags
+```
 positional arguments:
   dice_expression       Dice notation of what dice the oracle should roll on. Currently supports only dY and XdY
                         format ('d4', '1d6', '2d10' etc)
-
-options:
 ```
+
+```
+options:
   -h, --help            Shows this help message and exit
   -r, --rows [ROWS]     Expected number of results. An non-zero input value here, along with a dice experssion of dY,
                         will result in dice values being consolidated in that many rows (a d6 with rows of 3 result in
