@@ -6,6 +6,12 @@ This is created as a way for me to generate oracle templates for homebrewing iro
 
 If you intend to only use the pre-generated templates, you can simply download just the Templates folder.
 
+Each file follow the same naming convention:
+1. Prefix ("t_")
+2. Dice expression ("1d6", "2d20")
+3. Number of rows ("_3", "_10"), exempted if every row represents one and only one value of the dice
+4. Description of what the template is may be used for ("_delve_denizen"), exempted for general oracle templates
+
 To test using the template folder, 
 
 1. Add the Templates folder to your homebrew directory. Make sure homebrew content is enabled in the ironvault plugins settings
@@ -22,7 +28,6 @@ To test using the template folder,
 12. Click on any of the templates to activate it
 
 Then, whenever you need a template to work off, copy and paste the template you wish to use, renaming the file and adjusting the description and contents accordingly.
-
 
 If you intend to generate your own custom templates, continue below...
 
@@ -65,9 +70,6 @@ options:
   -p, --print-debug     Set this to allow the system to print messages, mainly for debugging purposes
 ```
 
-### Default file names
-
-
 ## Testing
 Testing is done via pytest, which needs to be installed via pip. 
 
@@ -82,7 +84,3 @@ It's highly recommanded to run this if you intend to make any changes to the pro
 ### To Run Tests 
 
 ```pytest```
-
-## Addendum: About filenames
-
-**This is relevant as of Ironvault v1.89.4**
