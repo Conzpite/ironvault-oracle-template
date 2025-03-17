@@ -1,4 +1,4 @@
-# ironvault-oracle-template
+# Ironvault Oracle Templates
 
 This is created as a way for me to generate oracle templates for homebrewing ironvault without typing the whole thing out by hand. Feel free to use as you wish.
 
@@ -12,8 +12,7 @@ Each file follow the same naming convention:
 3. Number of rows ("_3", "_10"), exempted if every row represents one and only one value of the dice
 4. Description of what the template is may be used for ("_delve_denizen"), exempted for general oracle templates
 
-To test using the template folder, 
-
+To test using the template folder:
 1. Add the Templates folder to your homebrew directory. Make sure homebrew content is enabled in the ironvault plugins settings
 2. Create a new campaign/Edit an existing campaign
 3. Ensure that the Custom playset is selected
@@ -37,7 +36,7 @@ Run the generate.py file to generate a custom file.
 
 If successful, a new file will be writen in the output folder. 
 
-By default, if no name is provided, then the file will default to "t_XdY{_ROWS}", so basically "t_d6", "t_3d10", "t_d100_3" etc...
+By default, if no name is provided, then a filename is automatically generated ("t_d6", "t_3d10", "t_d100_3" etc...)
 
 ### Command
 ```python generate.py [dice_expression]```
