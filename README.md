@@ -21,8 +21,8 @@ To test using the template folder:
 6. Add '*:templates/\*\*' to the text field
 7. Click select, then save
 8. Click on any page on the campaign
-9. If you don't have a right pane currently, click on the expand button on the top right of your tabs row (Right beside the minimize button)
-10. Select the IronVault button at the top right (You may have to drag out the right pane to see it), and make sure Oracle is selected
+9. If you don't have a right pane currently, click on the expand button on the top right of your toolbar (Right beside the minimize button)
+10. Select the IronVault button at the top right of your right pane (You may have to drag out the right pane to see it), and make sure Oracle is selected
 11. Select 'Templates/Basic Templates'
 12. Click on any of the templates to activate it. (Note that as of ironvault 1.89.4, the files seem to only be recognizable by the system only after the template files are directly opened at least once in obsidian. If you can only see a few of the templates whenever you add a new file, try to open it directly in obsidian and see if it appears in the list afterwards)
 
