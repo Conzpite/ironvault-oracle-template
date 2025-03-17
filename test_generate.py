@@ -1,4 +1,4 @@
-from generate import extract_dice_values, generate_header, retrieve_dataset_value, generate_table_values, read_dataset
+from generate import extract_dice_values, generate_header, retrieve_dataset_value, generate_table_values, read_dataset, create_default_filename
 import pytest
 
 class TestExtractDice:
@@ -49,6 +49,10 @@ class TestGenerateTableValue:
         assert generate_table_values(1, 6, 0, []) == (["1", "2", "3", "4", "5", "6"], 
                                                       ["Value 1", "Value 2", "Value 3", "Value 4", "Value 5", "Value 6"]);
 
+    def test_generate_table_value_1d6_into_5_rows(self):
+        assert generate_table_values(1, 6, 5, []) == (["1-2", "3", "4", "5", "6"], 
+                                                      ["Value 1", "Value 2", "Value 3", "Value 4", "Value 5"]);
+
     def test_generate_table_value_1d6_with_dataset(self):
         assert generate_table_values(1, 6, 0, ["Dataset 1", "Dataset 2", "Dataset 3", "Dataset 4", "Dataset 5", "Dataset 6", "Dataset 7", "Dataset 8"]) ==  \
                                                       (["1", "2", "3", "4", "5", "6"], 
@@ -57,6 +61,10 @@ class TestGenerateTableValue:
     def test_generate_table_value_2d4(self):
         assert generate_table_values(2, 4, 0, []) == (["2", "3", "4", "5", "6", "7", "8"], 
                                                       ["Value 1", "Value 2", "Value 3", "Value 4", "Value 5", "Value 6", "Value 7"]);
+
+    def test_generate_table_value_2d4_into_5_rows(self):
+        assert generate_table_values(2, 4, 5, []) == (["2-3", "4-5", "6", "7", "8"], 
+                                                      ["Value 1", "Value 2", "Value 3", "Value 4", "Value 5"]);
 
     def test_generate_table_value_2d4_with_dataset(self):
         assert generate_table_values(2, 4, 0, ["Dataset 1", "Dataset 2", "Dataset 3", "Dataset 4", "Dataset 5", "Dataset 6", "Dataset 7", "Dataset 8"]) ==  \
@@ -87,3 +95,26 @@ class TestReadDataset:
 
     def test_read_dataset_with_newline_in_text(self):
         assert read_dataset("Dataset 1\nDescription 1,Dataset 2\nDescription 2,Dataset 3\nDescription 3", ",", True) == ["Dataset 1<br>Description 1", "Dataset 2<br>Description 2", "Dataset 3<br>Description 3"];
+
+class TestCreateDefaultFileName:
+    def test_create_default_filename(self):
+        assert create_default_filename("1d6", 0) == "t_d6"
+
+    def test_create_default_filename_more_than_one_die(self):
+        assert create_default_filename("3d10", 0) == "t_3d10"
+
+    def test_create_default_filename_with_expected_rows(self):
+        assert create_default_filename("1d6", 3) == "t_d6_3"
+
+    def test_create_default_filename_more_than_one_die_with_expected_rows(self):
+        assert create_default_filename("3d10", 3) == "t_3d10_3"
+
+    def test_create_default_filename_more_than_one_die_with_expected_rows(self):
+        assert create_default_filename("3d10", 100) == "t_3d10"
+
+    def test_create_default_filename_too_much_expected_rows_from_one_die(self):
+        assert create_default_filename("1d6", 100) == "t_d6"
+
+    def test_create_default_filename_too_much_expected_rows_from_multiple_dice(self):
+        assert create_default_filename("3d10", 100) == "t_3d10"
+
