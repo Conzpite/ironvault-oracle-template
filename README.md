@@ -3,6 +3,8 @@ Contains a script to generate a markdown template for homebrew oracles to use in
 
 ## How to use
 
+For general use cases, you 
+
 
 ### Note!: About filenames
 
@@ -19,6 +21,7 @@ positional arguments:
                         format ('d4', '1d6', '2d10' etc)
 
 options:
+```
   -h, --help            Shows this help message and exit
   -r, --rows [ROWS]     Expected number of results. An non-zero input value here, along with a dice experssion of dY,
                         will result in dice values being consolidated in that many rows (a d6 with rows of 3 result in
@@ -39,16 +42,19 @@ options:
                         prevents row values from containing whitespaces and newlines at the start and end. set this to
                         stop it from doing so
   -p, --print-debug     Set this to allow the system to print messages, mainly for debugging purposes
+```
 
 ## Testing
 Testing is done via pytest, which needs to be installed via pip. 
 
-Calling the pytest command will then run various tests found in test_generate.py
+Calling the pytest command will then run various tests found in test_generate.py. 
 
-### Installation
+It's highly recommanded to run this if you intend to make any changes to the program.
+
+### Installation of pytest
 
 ```pip install -r requirements.txt```
 
-### Command 
+### To Run Tests 
 
 ```pytest```
