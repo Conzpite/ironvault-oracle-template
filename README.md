@@ -74,7 +74,7 @@ Testing is done via pytest, which needs to be installed via pip.
 
 Calling the pytest command will then run various tests found in test_generate.py. 
 
-It's highly recommanded to run this if you intend to make any changes to the program.
+It's highly recommanded to run this if you have made any changes to the program.
 
 ### Installation of pytest
 
